@@ -4,7 +4,8 @@ const express = require('express');
 
 // تجهيز سيرفر وهمي لمنع السيرفر من النوم
 const app = express();
-app.get('/', (req, res) => res.send('SmartCoin Gold Server is Running!'));
+const path = require('path');
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
 
@@ -44,7 +45,7 @@ bot.onText(/\/start/, async (msg) => {
         bot.sendMessage(chatId, `🌟 مرحباً بك في بوت تعدين SmartCoin Gold! 🌟\n\nاضغط على الزر أدناه لفتح واجهة التعدين وابدأ بجمع النقاط الآن!`, {
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "🚀 فتح التطبيق وِالتعدين", web_app: { url: `https://google.com` } }]
+                    [{ text: "🚀 فتح التطبيق وِالتعدين", web_app: { url: `https://smartcoin-gold-xuuc.onrender.com` } }]
                 ]
             }
         });
