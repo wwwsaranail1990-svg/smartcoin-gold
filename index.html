@@ -3,143 +3,255 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartCoin Gold Mining</title>
+    <title>SmartCoin Gold Hub</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
             background-color: #0b0f19;
             color: #ffffff;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
             display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            user-select: none;
+            direction: rtl;
+        }
+        
+        /* شريط التنقل السفلي */
+        .navbar {
+            display: flex;
+            justify-content: space-around;
+            background-color: #111726;
+            padding: 12px 0;
+            border-top: 2px solid #1a233a;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            z-index: 100;
+        }
+        .nav-item {
+            font-size: 14px;
+            color: #85929e;
+            cursor: pointer;
+            text-align: center;
+            flex: 1;
+        }
+        .nav-item.active {
+            color: #ffd700;
+            font-weight: bold;
+        }
+        .nav-icon {
+            font-size: 22px;
+            margin-bottom: 2px;
+        }
+
+        /* الصفحات والمحتوى */
+        .page {
+            display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
-            user-select: none;
+            flex: 1;
+            padding: 20px;
+            margin-bottom: 70px;
+            overflow-y: auto;
         }
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
+        .page.active {
+            display: flex;
         }
+
+        /* شاشة التعدين الرئيسOfficial */
         .balance-container {
-            font-size: 36px;
+            font-size: 38px;
             font-weight: bold;
             color: #ffd700;
             text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
-            margin-top: 10px;
-        }
-        .coin-container {
-            position: relative;
-            margin: 30px 0;
+            margin: 10px 0;
         }
         .coin {
-            width: 220px;
-            height: 220px;
+            width: 200px;
+            height: 200px;
             background: radial-gradient(circle, #ffe066 0%, #f5b041 70%, #d35400 100%);
             border-radius: 50%;
-            box-shadow: 0 0 35px rgba(245, 176, 65, 0.7), inset 0 0 20px rgba(255,255,255,0.6);
+            box-shadow: 0 0 35px rgba(245, 176, 65, 0.6), inset 0 0 20px rgba(255,255,255,0.6);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 80px;
             cursor: pointer;
             transition: transform 0.05s ease;
-            border: 8px solid #b7950b;
+            border: 6px solid #b7950b;
+            margin: 30px 0;
         }
-        .coin:active {
-            transform: scale(0.92);
-        }
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            width: 85%;
-            background-color: #1a233a;
+        .coin:active { transform: scale(0.92); }
+
+        /* البطاقات والصناديق التفاعلية */
+        .card {
+            background-color: #161f33;
+            border-radius: 12px;
             padding: 15px;
-            border-radius: 14px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            width: 90%;
+            margin: 10px 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            border: 1px solid #212e4a;
         }
-        .stat-box {
-            text-align: center;
-        }
-        .stat-label {
-            font-size: 13px;
-            color: #85929e;
-        }
-        .stat-value {
-            font-size: 20px;
+        .card h3 { margin-top: 0; color: #ffd700; }
+        .btn {
+            background: linear-gradient(135deg, #f5b041, #d35400);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
             font-weight: bold;
-            color: #5dade2;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn:active { transform: scale(0.98); }
+        .input-box {
+            width: 95%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 6px;
+            border: 1px solid #212e4a;
+            background-color: #0b0f19;
+            color: white;
+            text-align: center;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h3 id="welcomeUser">تحميل البيانات...</h3>
-        <div class="balance-container" id="balance">0.0000</div>
-    </div>
-
-    <div class="coin-container">
+    <div id="page-mining" class="page active">
+        <h3 id="user-title">جاري تحميل الحساب...</h3>
+        <div class="balance-container"><span id="balance">0.0000</span> 🪙</div>
         <div class="coin" id="coinBtn">🪙</div>
+        <div class="card" style="display:flex; justify-content:space-around; text-align:center;">
+            <div>
+                <div style="font-size:12px; color:#85929e;">المستوى</div>
+                <div style="font-size:18px; font-weight:bold; color:#5dade2;" id="level">1</div>
+            </div>
+            <div>
+                <div style="font-size:12px; color:#85929e;">التعدين التلقائي/ساعة</div>
+                <div style="font-size:18px; font-weight:bold; color:#2ecc71;"><span id="auto-rate">0</span> SCG</div>
+            </div>
+        </div>
     </div>
 
-    <div class="stats">
-        <div class="stat-box">
-            <div class="stat-label">المستوى</div>
-            <div class="stat-value" id="level">1</div>
+    <div id="page-shop" class="page">
+        <h2>متجر الترقيات المدفوعة 🚀</h2>
+        <p style="text-align:center; color:#85929e; font-size:14px;">قم بترقية عتادك لزيادة قوة الضغط والتعدين التلقائي</p>
+        
+        <div class="card">
+            <h3>⚡ ترقية قوة الضربة (Multi-Tap)</h3>
+            <p>زيادة إنتاج الضغطة الواحدة بمقدار +1 نقطة.</p>
+            <button class="btn" onclick="buyUpgrade('tap')">شراء برصيد العملة (100 🪙)</button>
         </div>
-        <div class="stat-box">
-            <div class="stat-label">قوة الضربة</div>
-            <div class="stat-value">+1</div>
+
+        <div class="card">
+            <h3>⛏️ جهاز تعدين سحابي تلقائي (Level 2)</h3>
+            <p>يعدن لك 50 عملة تلقائياً كل ساعة دون توقف.</p>
+            <p style="color:#2ecc71; font-weight:bold;">السعر: 5 USDT</p>
+            <button class="btn" style="background:linear-gradient(135deg, #27ae60, #117a65);" onclick="showDepositAlert()">شراء عبر USDT (Binance)</button>
+        </div>
+    </div>
+
+    <div id="page-wallet" class="page">
+        <h2>محفظتك الرقمية 💼</h2>
+        <div class="card" style="text-align:center;">
+            <div style="color:#85929e;">رصيدك القابل للسحب</div>
+            <div style="font-size:28px; font-weight:bold; color:#2ecc71; margin:5px 0;"><span id="wallet-balance">0.0000</span> SCG</div>
+        </div>
+
+        <div class="card">
+            <h3>📥 شحن الحساب (إيداع USDT)</h3>
+            <p style="font-size:13px; color:#85929e;">عنوان محفظة المنصة الرسمي (TRC20):</p>
+            <input type="text" class="input-box" value="TY1rX... (عنوان محفظتك الفعلي)" readonly>
+            <p style="font-size:11px; color:#e74c3c;">*بعد الدفع، أرسل رقم العملية (TxID) للدعم لتفعيل الرصيد يدوياً.</p>
+        </div>
+
+        <div class="card">
+            <h3>📤 طلب سحب الأرباح</h3>
+            <p style="font-size:12px; color:#85929e;">*يتم معالجة السحب مرة واحدة أسبوعياً لضمان السيولة.</p>
+            <input type="text" class="input-box" id="withdraw-address" placeholder="أدخل عنوان محفظتك USDT TRC20">
+            <input type="number" class="input-box" id="withdraw-amount" placeholder="الكمية المراد سحبها">
+            <button class="btn" onclick="requestWithdraw()">تقديم طلب السحب</button>
+        </div>
+    </div>
+
+    <div class="navbar">
+        <div class="nav-item active" onclick="switchPage('mining', this)">
+            <div class="nav-icon">⛏️</div>
+            <div>التعدين</div>
+        </div>
+        <div class="nav-item" onclick="switchPage('shop', this)">
+            <div class="nav-icon">🚀</div>
+            <div>المتجر</div>
+        </div>
+        <div class="nav-item" onclick="switchPage('wallet', this)">
+            <div class="nav-icon">💼</div>
+            <div>المحفظة</div>
         </div>
     </div>
 
     <script>
-        // تفعيل تطبيق الويب الخاص بتلجرام
         const tg = window.Telegram.WebApp;
-        tg.expand(); // فتح الواجهة بكامل الشاشة
+        tg.expand();
 
-        // جلب بيانات المستخدم من تلجرام
         const user = tg.initDataUnsafe?.user;
-        const telegramId = user ? user.id : null;
+        const telegramId = user ? user.id : 999; 
         const username = user ? (user.username || user.first_name) : "المبرمج";
 
-        document.getElementById('welcomeUser').innerText = `🪙 سبيكة: ${username}`;
+        document.getElementById('user-title').innerText = `👋 مرحباً، ${username}`;
 
-        let balance = 0.0000;
+        let balance = 0.0;
         let miningLevel = 1;
 
-        // جلب رصيد المستخدم الحقيقي من السيرفر عند فتح اللعبة
-        if (telegramId) {
-            fetch(`/api/user/${telegramId}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data) {
-                        balance = parseFloat(data.balance || 0);
-                        miningLevel = data.mining_level || 1;
-                        document.getElementById('balance').innerText = balance.toFixed(4);
-                        document.getElementById('level').innerText = miningLevel;
-                    }
-                }).catch(err => console.error("خطأ في جلب البيانات:", err));
+        // التنقل بين الصفحات بسلاسة
+        function switchPage(pageId, element) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            
+            document.getElementById(`page-${pageId}`).classList.add('active');
+            element.classList.add('active');
         }
 
-        // عند الضغط على العملة لتعدين النقاط
+        // كود الضغط والتعدين المباشر
         const coinBtn = document.getElementById('coinBtn');
         coinBtn.addEventListener('click', () => {
-            balance += 1; // زيادة نقطة واحدة
-            document.getElementById('balance').innerText = balance.toFixed(4);
+            balance += 1.0; 
+            updateUI();
+            saveData();
+        });
 
-            // إرسال النقاط الجديدة فوراً لحفظها في قاعدة البيانات Supabase
+        function updateUI() {
+            document.getElementById('balance').innerText = balance.toFixed(4);
+            document.getElementById('wallet-balance').innerText = balance.toFixed(4);
+        }
+
+        function saveData() {
             if (telegramId) {
                 fetch('/api/mine', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ telegram_id: telegramId, balance: balance })
-                }).catch(err => console.error("خطأ في حفظ النقاط:", err));
+                }).catch(err => console.error(err));
             }
-        });
+        }
+
+        function showDepositAlert() {
+            alert("يرجى نسخ عنوان محفظة الـ USDT من قسم المحفظة وإرسال المبلغ، ثم التواصل مع الإدارة لتفعيل الترقية يدوياً.");
+        }
+
+        function requestWithdraw() {
+            const addr = document.getElementById('withdraw-address').value;
+            const amt = document.getElementById('withdraw-amount').value;
+            if(!addr || !amt) return alert("يرجى ملء البيانات كاملة!");
+            alert(`تم تسجيل طلب سحب ${amt} USDT بنجاح. سيتم مراجعته يدوياً خلال الـ 7 أيام القادمة.`);
+        }
     </script>
 </body>
 </html>
