@@ -1,46 +1,84 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SmartCoin Gold Pro</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { background: #050505; color: #fff; font-family: sans-serif; margin: 0; }
-        .header { text-align: center; padding: 20px; }
-        .balance-box { font-size: 40px; font-weight: bold; color: #ffcc00; margin: 20px 0; }
-        .mining-card { background: #1a1a1a; padding: 30px; border-radius: 20px; text-align: center; border: 1px solid #333; }
-        .btn-invest { background: #ffcc00; color: #000; padding: 15px; border-radius: 10px; border: none; font-weight: bold; width: 80%; cursor: pointer; margin-top: 10px; }
-        .nav { position: fixed; bottom: 0; width: 100%; display: flex; background: #111; padding: 15px; justify-content: space-around; }
+        /* CSS الخاص بك الأصلي مع تحسينات جمالية */
+        body { background-color: #0b0f19; color: #ffffff; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; direction: rtl; }
+        .page { display: none; padding: 20px; flex: 1; overflow-y: auto; }
+        .page.active { display: block; }
+        .navbar { display: flex; justify-content: space-around; background: #111726; padding: 15px; position: fixed; bottom: 0; width: 100%; border-top: 1px solid #212e4a; }
+        .nav-item { cursor: pointer; text-align: center; color: #85929e; }
+        .nav-item.active { color: #ffd700; }
+        .card { background: #161f33; border-radius: 15px; padding: 20px; margin-bottom: 15px; border: 1px solid #212e4a; }
+        .balance-text { font-size: 32px; font-weight: bold; color: #ffd700; text-align: center; }
+        .btn { background: linear-gradient(135deg, #f5b041, #d35400); color: white; border: none; padding: 12px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h3>مرحباً في SmartCoin Gold</h3>
-        <div class="balance-box" id="balance">0.0000</div>
-    </div>
-    
-    <div class="mining-card">
-        <h3>تعدين تلقائي نشط ⚡</h3>
-        <p>لا حاجة للتكبيس، الرصيد يزداد تلقائياً!</p>
-        <button class="btn-invest" onclick="switchPage('wallet')">الذهاب للمحفظة والاستثمار</button>
+
+    <div id="page-mining" class="page active">
+        <div class="card">
+            <h3 id="user-title">مرحباً</h3>
+            <div class="balance-text"><span id="balance">0.0000</span> 🪙</div>
+            <p style="text-align: center; color: #2ecc71;">التعدين يعمل تلقائياً...</p>
+        </div>
     </div>
 
-    <div class="nav">
-        <div onclick="switchPage('home')">الرئيسية</div>
-        <div onclick="switchPage('wallet')">المحفظة</div>
+    <div id="page-wallet" class="page">
+        <h2>المحفظة والاستثمار 💼</h2>
+        <div class="card">
+            <h3>📈 خطط الاستثمار (40 يوم)</h3>
+            <button class="btn" onclick="invest(3)">استثمار 3$</button>
+            <button class="btn" onclick="invest(5)">استثمار 5$</button>
+        </div>
+    </div>
+
+    <div class="navbar">
+        <div class="nav-item active" onclick="switchPage('mining', this)">⛏️ التعدين</div>
+        <div class="nav-item" onclick="switchPage('wallet', this)">💼 المحفظة</div>
     </div>
 
     <script>
-        // دالة جلب الرصيد التلقائي عند فتح التطبيق
-        async function fetchBalance() {
-            const response = await fetch('/api/mine', { 
-                method: 'POST', 
-                body: JSON.stringify({ telegram_id: window.Telegram.WebApp.initDataUnsafe.user.id }) 
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        const telegramid = tg.initDataUnsafe?.user?.id || 999;
+
+        // دالة التعدين التلقائي عند فتح الصفحة
+        async function updateBalanceOnLoad() {
+            try {
+                const response = await fetch('/api/mine', { 
+                    method: 'POST', 
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ telegram_id: telegramid }) 
+                });
+                const result = await response.json();
+                if (result.success) document.getElementById('balance').innerText = result.balance.toFixed(4);
+            } catch(e) { console.error("Error loading balance"); }
+        }
+
+        function switchPage(pageId, el) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.getElementById(`page-${pageId}`).classList.add('active');
+            el.classList.add('active');
+        }
+
+        async function invest(amount) {
+            const response = await fetch('/api/invest', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ telegram_id: telegramid, amount })
             });
             const result = await response.json();
-            document.getElementById('balance').innerText = result.balance.toFixed(4);
+            alert(result.success ? "تم الاستثمار!" : "خطأ: " + result.error);
+            if (result.success) location.reload();
         }
-        window.onload = fetchBalance;
+
+        window.onload = updateBalanceOnLoad;
     </script>
 </body>
 </html>
