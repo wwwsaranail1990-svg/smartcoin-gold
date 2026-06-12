@@ -195,6 +195,11 @@
             <div class="nav-icon">💼</div>
             <div>المحفظة</div>
         </div>
+        <div style="margin-top: 20px; text-align: center;">
+    <h3>خطط الاستثمار (40 يوم)</h3>
+    <button class="btn" onclick="invest(3)">استثمار 3$</button>
+    <button class="btn" onclick="invest(5)">استثمار 5$</button>
+</div>
     </div>
 
     <script>
@@ -245,7 +250,23 @@
         function showDepositAlert() {
             alert("يرجى نسخ عنوان محفظة الـ USDT من قسم المحفظة وإرسال المبلغ، ثم التواصل مع الإدارة لتفعيل الترقية يدوياً.");
         }
+async function invest(amount) {
+    const telegram_id = telegramid; 
+    const response = await fetch('/api/invest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ telegram_id, amount })
+    });
+    const result = await response.json();
+    if (result.success) {
+        alert("تم تفعيل الاستثمار بنجاح!");
+        location.reload();
+    } else {
+        alert(result.error || "حدث خطأ");
+    }
+}
 
+    
         function requestWithdraw() {
             const addr = document.getElementById('withdraw-address').value;
             const amt = document.getElementById('withdraw-amount').value;
