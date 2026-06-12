@@ -39,6 +39,22 @@ app.post('/api/mine', async (req, res) => {
     }
 });
 
+
+app.post('/api/invest', async (req, res) => {
+    const { telegram_id, amount } = req.body;
+    const { data: user } = await supabase.from('users').select('*').eq('telegram_id', telegram_id).single();
+    
+    if (user.balance < amount) return res.json({ error: "رصيد غير كافٍ" });
+
+    await supabase.from('users').update({ 
+        balance: user.balance - amount,
+        invested_amount: amount,
+        is_investing: true 
+    }).eq('telegram_id', telegram_id);
+    
+    res.json({ success: true });
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
 
