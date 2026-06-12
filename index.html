@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartCoin Gold Mining</title>
+    <style>
+        body {
+            background-color: #0b0f19;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            user-select: none;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .balance-container {
+            font-size: 32px;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            margin-top: 10px;
+        }
+        .coin-container {
+            position: relative;
+            margin: 40px 0;
+        }
+        .coin {
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, #ffe066 0%, #f5b041 70%, #d35400 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 30px rgba(245, 176, 65, 0.6), inset 0 0 15px rgba(255,255,255,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 70px;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+            border: 8px solid #b7950b;
+        }
+        .coin:active {
+            transform: scale(0.95);
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            width: 80%;
+            background-color: #1a233a;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .stat-box {
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #85929e;
+        }
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #5dade2;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h2>SmartCoin Gold</h2>
+        <div class="balance-container" id="balance">0.0000</div>
+    </div>
+
+    <div class="coin-container">
+        <div class="coin" id="coinBtn">🪙</div>
+    </div>
+
+    <div class="stats">
+        <div class="stat-box">
+            <div class="stat-label">المستوى</div>
+            <div class="stat-value" id="level">1</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-label">قوة الضربة</div>
+            <div class="stat-value">+1</div>
+        </div>
+    </div>
+
+    <script>
+        let balance = 0.0000;
+        const balanceEl = document.getElementById('balance');
+        const coinBtn = document.getElementById('coinBtn');
+
+        coinBtn.addEventListener('click', () => {
+            // زيادة الرصيد مؤقتاً في الواجهة عند الضغط
+            balance += 1;
+            balanceEl.innerText = balance.toFixed(4);
+            
+            // هنا لاحقاً سنضيف كود الربط الفوري ليرسل النقاط إلى Supabase مباشرة
+        });
+    </script>
+</body>
+</html>
