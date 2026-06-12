@@ -1,0 +1,14 @@
+{
+  "name": "smartcoin-gold",
+  "version": "1.0.0",
+  "description": "Telegram Tap-to-Earn Bot connected to Supabase",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "node-telegram-bot-api": "^0.66.0",
+    "@supabase/supabase-js": "^2.43.4",
+    "express": "^4.19.2"
+  }
+}
