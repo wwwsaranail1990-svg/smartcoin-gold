@@ -4,12 +4,12 @@ const express = require('express');
 const path = require('path');
 
 const app = express();
-app.use(express.json()); // تفعيل استقبال البيانات بصيغة JSON
+app.use(express.json());
 
-// عرض واجهة اللعبة index.html للمستخدمين
+// عرض واجهة اللعبة للمستخدمين
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 
-// API لجلب بيانات المستخدم عند فتح اللعبة
+// API لجلب بيانات المستخدم
 app.get('/api/user/:id', async (req, res) => {
     try {
         const { data, error } = await supabase
@@ -24,7 +24,7 @@ app.get('/api/user/:id', async (req, res) => {
     }
 });
 
-// API لتحديث وحفظ نقاط التعدين في قاعدة البيانات فوراً
+// API لتحديث وحفظ نقاط التعدين
 app.post('/api/mine', async (req, res) => {
     const { telegram_id, balance } = req.body;
     try {
@@ -42,7 +42,7 @@ app.post('/api/mine', async (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
 
-// جلب المتغيرات البيئية بأمان من منصة Render
+// جلب المتغيرات البيئية من منصة Render
 const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN;
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
@@ -50,10 +50,10 @@ const SUPABASE_KEY = process.env.SUPABASE_KEY;
 const bot = new TelegramBot(TELEGRAM_TOKEN, { polling: true });
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ⚠️ تعيين معرف التلجرام الخاص بك كمدير للمشروع لتفعيل لوحة التحكم ⚠️
+// تعيين معرف التلجرام الخاص بك كمدير للمشروع
 const ADMIN_ID = 7018561132; 
 
-// أمر البداية /start للمستخدمين
+// أمر البداية للمستخدمين
 bot.onText(/\/start/, async (msg) => {
     const chatId = msg.chat.id;
     const username = msg.from.username || 'NoUsername';
@@ -74,7 +74,6 @@ bot.onText(/\/start/, async (msg) => {
             user = newUser;
         }
 
-        // إرسال رسالة الترحيب مع زر فتح اللعبة على سيرفرك الخاص
         bot.sendMessage(chatId, `🌟 مرحباً بك في بوت تعدين SmartCoin Gold! 🌟\n\nاضغط على الزر أدناه لفتح واجهة التعدين وابدأ بجمع النقاط الآن!`, {
             reply_markup: {
                 inline_keyboard: [
@@ -89,7 +88,7 @@ bot.onText(/\/start/, async (msg) => {
     }
 });
 
-// أمر فتح لوحة التحكم للمطور/المدير فقط
+// أمر فتح لوحة التحكم للمطور
 bot.onText(/\/admin/, async (msg) => {
     const chatId = msg.chat.id;
 
@@ -104,7 +103,7 @@ bot.onText(/\/admin/, async (msg) => {
 
         const userCount = count || 0;
 
-        bot.sendMessage(chatId, `👑 أهلاً بك في لوحة تحكم SmartCoin Gold 👑\n\n📊 عدد المشتركين الإجمالي: ${userCount} مستخدم\n\nإليك الأوامر المتاحة لك كمدير:\n\n🔹 لتعديل رصيد مستخدم:\n<code>/setbalance [ID] [الرصيد]</code>\n\n🔹 لترقية مستوى تعدين مستخدم:\n<code>/setlevel [ID] [المستوى]</code>`, { parse_mode: 'HTML' });
+        bot.sendMessage(chatId, `👑 أهلاً بك في لوحة تحكم SmartCoin Gold 👑\n\n📊 عدد المشتركين الإجمالي: ${userCount} مستخدم\n\nإليك الأوامر المتاحة لك كمدير:\n\n🔹 لتعديل رصيد مستخدم:\n<code>/setbalance [ID] [الرصيد]</code>`, { parse_mode: 'HTML' });
 
     } catch (err) {
         console.error(err);
@@ -112,7 +111,7 @@ bot.onText(/\/admin/, async (msg) => {
     }
 });
 
-// أمر الإدارة لتعديل رصيد أي لاعب يدوياً
+// أمر الإدارة لتعديل رصيد أي لاعب
 bot.onText(/\/setbalance (\d+) (\d+)/, async (msg, match) => {
     const chatId = msg.chat.id;
     if (chatId !== ADMIN_ID) return;
