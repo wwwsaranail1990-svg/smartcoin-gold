@@ -1,119 +1,46 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartCoin Gold Hub</title>
+    <title>SmartCoin Gold Pro</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { background-color: #0b0f19; color: #ffffff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; user-select: none; direction: rtl; }
-        .navbar { display: flex; justify-content: space-around; background-color: #111726; padding: 12px 0; border-top: 2px solid #1a233a; position: fixed; bottom: 0; width: 100%; z-index: 100; }
-        .nav-item { font-size: 14px; color: #85929e; cursor: pointer; text-align: center; flex: 1; }
-        .nav-item.active { color: #ffd700; font-weight: bold; }
-        .nav-icon { font-size: 22px; margin-bottom: 2px; }
-        .page { display: none; flex-direction: column; align-items: center; justify-content: center; flex: 1; padding: 20px; margin-bottom: 70px; overflow-y: auto; }
-        .page.active { display: flex; }
-        .balance-container { font-size: 38px; font-weight: bold; color: #ffd700; text-shadow: 0 0 15px rgba(255, 215, 0, 0.6); margin: 10px 0; }
-        .coin { width: 200px; height: 200px; background: radial-gradient(circle, #ffe066 0%, #f5b041 70%, #d35400 100%); border-radius: 50%; box-shadow: 0 0 35px rgba(245, 176, 65, 0.6), inset 0 0 20px rgba(255,255,255,0.6); display: flex; align-items: center; justify-content: center; font-size: 80px; cursor: pointer; transition: transform 0.05s ease; border: 6px solid #b7950b; margin: 30px 0; }
-        .coin:active { transform: scale(0.92); }
-        .card { background-color: #161f33; border-radius: 12px; padding: 15px; width: 90%; margin: 10px 0; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border: 1px solid #212e4a; }
-        .card h3 { margin-top: 0; color: #ffd700; }
-        .btn { background: linear-gradient(135deg, #f5b041, #d35400); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
-        .btn:active { transform: scale(0.98); }
-        .input-box { width: 95%; padding: 10px; margin: 8px 0; border-radius: 6px; border: 1px solid #212e4a; background-color: #0b0f19; color: white; text-align: center; }
+        body { background: #050505; color: #fff; font-family: sans-serif; margin: 0; }
+        .header { text-align: center; padding: 20px; }
+        .balance-box { font-size: 40px; font-weight: bold; color: #ffcc00; margin: 20px 0; }
+        .mining-card { background: #1a1a1a; padding: 30px; border-radius: 20px; text-align: center; border: 1px solid #333; }
+        .btn-invest { background: #ffcc00; color: #000; padding: 15px; border-radius: 10px; border: none; font-weight: bold; width: 80%; cursor: pointer; margin-top: 10px; }
+        .nav { position: fixed; bottom: 0; width: 100%; display: flex; background: #111; padding: 15px; justify-content: space-around; }
     </style>
 </head>
 <body>
-
-    <div id="page-mining" class="page active">
-        <h3 id="user-title">جاري تحميل الحساب...</h3>
-        <div class="balance-container"><span id="balance">0.0000</span> 🪙</div>
-        <div class="coin" id="coinBtn">🪙</div>
-        <div class="card" style="display:flex; justify-content:space-around; text-align:center;">
-            <div><div style="font-size:12px; color:#85929e;">المستوى</div><div style="font-size:18px; font-weight:bold; color:#5dade2;" id="level">1</div></div>
-            <div><div style="font-size:12px; color:#85929e;">التعدين التلقائي/ساعة</div><div style="font-size:18px; font-weight:bold; color:#2ecc71;"><span id="auto-rate">0</span> SCG</div></div>
-        </div>
+    <div class="header">
+        <h3>مرحباً في SmartCoin Gold</h3>
+        <div class="balance-box" id="balance">0.0000</div>
+    </div>
+    
+    <div class="mining-card">
+        <h3>تعدين تلقائي نشط ⚡</h3>
+        <p>لا حاجة للتكبيس، الرصيد يزداد تلقائياً!</p>
+        <button class="btn-invest" onclick="switchPage('wallet')">الذهاب للمحفظة والاستثمار</button>
     </div>
 
-    <div id="page-shop" class="page">
-        <h2>متجر الترقيات المدفوعة 🚀</h2>
-        <div class="card">
-            <h3>⚡ ترقية قوة الضربة (Multi-Tap)</h3>
-            <button class="btn" onclick="buyUpgrade('tap')">شراء (100 🪙)</button>
-        </div>
-        <div class="card">
-            <h3>⛏️ جهاز تعدين سحابي (Level 2)</h3>
-            <button class="btn" onclick="showDepositAlert()">شراء عبر USDT</button>
-        </div>
-    </div>
-
-    <div id="page-wallet" class="page">
-        <h2>محفظتك الرقمية 💼</h2>
-        
-        <div class="card">
-            <h3>👤 بيانات الحساب</h3>
-            <input type="text" class="input-box" id="full-name" placeholder="الاسم الكامل">
-            <input type="email" class="input-box" id="user-email" placeholder="البريد الإلكتروني">
-            <button class="btn" onclick="saveProfile()">حفظ البيانات</button>
-        </div>
-
-        <div class="card">
-            <h3>📈 خطط الاستثمار (40 يوم)</h3>
-            <button class="btn" onclick="invest(3)">استثمار 3$</button>
-            <button class="btn" onclick="invest(5)">استثمار 5$</button>
-            <button class="btn" onclick="invest(10)">استثمار 10$</button>
-        </div>
-
-        <div class="card">
-            <h3>📤 طلب سحب الأرباح</h3>
-            <input type="text" class="input-box" id="withdraw-address" placeholder="عنوان محفظتك USDT">
-            <button class="btn" onclick="requestWithdraw()">تقديم طلب السحب</button>
-        </div>
-    </div>
-
-    <div class="navbar">
-        <div class="nav-item active" onclick="switchPage('mining', this)"><div class="nav-icon">⛏️</div><div>التعدين</div></div>
-        <div class="nav-item" onclick="switchPage('shop', this)"><div class="nav-icon">🚀</div><div>المتجر</div></div>
-        <div class="nav-item" onclick="switchPage('wallet', this)"><div class="nav-icon">💼</div><div>المحفظة</div></div>
+    <div class="nav">
+        <div onclick="switchPage('home')">الرئيسية</div>
+        <div onclick="switchPage('wallet')">المحفظة</div>
     </div>
 
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        const user = tg.initDataUnsafe?.user;
-        const telegramid = user ? user.id : 999; 
-        const username = user ? (user.username || user.first_name) : "المبرمج";
-        document.getElementById('user-title').innerText = `👋 مرحباً، ${username}`;
-
-        let balance = 0.0;
-        function switchPage(pageId, element) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            document.getElementById(`page-${pageId}`).classList.add('active');
-            element.classList.add('active');
-        }
-
-        document.getElementById('coinBtn').addEventListener('click', () => { balance += 1.0; updateUI(); });
-        function updateUI() { document.getElementById('balance').innerText = balance.toFixed(4); document.getElementById('wallet-balance').innerText = balance.toFixed(4); }
-
-        async function saveProfile() { alert("تم حفظ بياناتك بنجاح!"); }
-
-        async function invest(amount) {
-            const response = await fetch('/api/invest', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ telegram_id: telegramid, amount: amount })
+        // دالة جلب الرصيد التلقائي عند فتح التطبيق
+        async function fetchBalance() {
+            const response = await fetch('/api/mine', { 
+                method: 'POST', 
+                body: JSON.stringify({ telegram_id: window.Telegram.WebApp.initDataUnsafe.user.id }) 
             });
             const result = await response.json();
-            if (result.success) {
-                alert("تم تفعيل الاستثمار بنجاح!");
-                location.reload();
-            } else {
-                alert("خطأ: " + (result.error || "حدث خطأ"));
-            }
+            document.getElementById('balance').innerText = result.balance.toFixed(4);
         }
-        function requestWithdraw() { alert("تم تسجيل الطلب."); }
-        function showDepositAlert() { alert("تواصل مع الإدارة."); }
+        window.onload = fetchBalance;
     </script>
 </body>
 </html>
